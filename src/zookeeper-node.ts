@@ -14,7 +14,7 @@ export class ZookeeperNode {
         };
     }
 
-    async getChildren(element): Promise<ZookeeperNode[]> {
+    async getChildren(element?: ZookeeperNode): Promise<ZookeeperNode[]> {
         return [];
     }
 }

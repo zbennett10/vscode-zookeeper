@@ -1,7 +1,7 @@
 import {TreeDataProvider, TreeItem, EventEmitter, Event} from 'vscode';
 import { ZookeeperNode } from './zookeeper-node';
 
-export class ZookeeperExplorerProvider implements TreeDataProvider<TreeItem> {
+export default class ZookeeperExplorerProvider implements TreeDataProvider<TreeItem> {
     private _onDidChangeTreeData: EventEmitter<ZookeeperNode | undefined> = new EventEmitter<ZookeeperNode | undefined>();
 	readonly onDidChangeTreeData: Event<ZookeeperNode | undefined> = this._onDidChangeTreeData.event;
 

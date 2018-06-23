@@ -1,64 +1,57 @@
 {
-  "name": "vs-zookeeper",
-  "publisher": "Zachary Bennett",
-  "version": "1.0.0",
-  "description": "A Visual Studio Code extension for managing Apache Zookeeper",
-  "main": "./out/extension",
-  "scripts": {
-    "test": "mocha",
-    "vscode:prepublish": "tsc -p ./",
-    "compile": "tsc -watch -p ./",
-    "postinstall": "node ./node_modules/vscode/bin/install",
-    "tslint": "tslint -c tslint.json src/extension.ts"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/zbennett10/vs-zookeeper.git"
-  },
-  "keywords": [
-    "vscode",
-    "zookeeper"
-  ],
-  "author": "Zachary Bennett",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/zbennett10/vs-zookeeper/issues"
-  },
-  "engines": {
-    "vscode": "^1.23.0"
-  },
-  "activationEvents": [
+    "name": "vscode-zookeeper",
+    "displayName": "vscode-zookeeper",
+    "description": "A Visual Studio Code extension for configuring Apache Zookeeper.",
+    "version": "0.0.1",
+    "publisher": "zbennett10",
+    "engines": {
+        "vscode": "^1.24.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "*",
         "onDebug",
         "onView:zookeeperExplorer"
-  ],
-  "contributes": {
-    "viewsContainers": {
-      "activitybar": [
-        {
-          "id": "zookeeperView",
-          "title": "Zookeeper",
-          "icon": "media/zookeeper.svg"
+    ],
+    "main": "./out/extension",
+    "contributes": {
+        "viewsContainers": {
+            "activitybar": [
+                {
+                "id": "zookeeperView",
+                "title": "Zookeeper",
+                "icon": "media/zookeeper.svg"
+                }
+            ]
+        },
+        "views": {
+            "zookeeperView": [
+                {
+                "id": "zookeeperExplorer",
+                "name": "Zookeeper"
+                }
+            ]
         }
-      ]
+
     },
-    "views": {
-      "zookeeperView": [
-        {
-          "id": "zookeeperExplorer",
-          "name": "Zookeeper"
-        }
-      ]
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "postinstall": "node ./node_modules/vscode/bin/install",
+        "test": "npm run compile && node ./node_modules/vscode/bin/test"
+    },
+    "dependencies": {
+        "node-zookeeper-client": "^0.2.2"
+    },
+    "devDependencies": {
+        "typescript": "^2.6.1",
+        "vscode": "^1.1.6",
+        "tslint": "^5.8.0",
+        "@types/node-zookeeper-client": "^0.2.6",
+        "@types/node": "^7.0.43",
+        "@types/mocha": "^2.2.42"
     }
-  },
-  "categories": [
-    "Other"
-  ],
-  "homepage": "https://github.com/zbennett10/vs-zookeeper#readme",
-  "devDependencies": {
-    "@types/node": "^8.0.34",
-    "tslint": "^5.10.0",
-    "tslint-config-standard": "^7.1.0",
-    "typescript": "^2.1.5",
-    "vscode": "^1.0.0"
-  }
 }
