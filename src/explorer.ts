@@ -1,5 +1,6 @@
 import {TreeDataProvider, TreeItem, EventEmitter, Event} from 'vscode';
 import { ZookeeperNode } from './zookeeper-node';
+import * as zk from './zkApi';
 
 export default class ZookeeperExplorerProvider implements TreeDataProvider<TreeItem> {
     private _onDidChangeTreeData: EventEmitter<ZookeeperNode | undefined> = new EventEmitter<ZookeeperNode | undefined>();
@@ -12,13 +13,14 @@ export default class ZookeeperExplorerProvider implements TreeDataProvider<TreeI
 	}
     
     getTreeItem(element: ZookeeperNode): TreeItem {
-        return element.getTreeItem();
+        return element;
     }
 
     async getChildren(element?: ZookeeperNode): Promise<ZookeeperNode[]> {
-        if (!element) {
-            return [];
+        if (element) {
+            return element.getChildren(element);
+        } else {
+            return zk.getChildren();
         }
-        return element.getChildren(element);
     }
 }

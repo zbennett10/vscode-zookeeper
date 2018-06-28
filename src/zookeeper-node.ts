@@ -1,10 +1,17 @@
 import {TreeItem, TreeItemCollapsibleState} from 'vscode';
+import * as zk from './zkApi';
 
-export class ZookeeperNode {
-    readonly label: string;
+export class ZookeeperNode extends TreeItem {
 
-    protected constructor(label: string) {
-        this.label = label;
+    constructor(
+        public readonly label: string,
+        public readonly collapsibleState: TreeItemCollapsibleState
+    ) {
+        super(label, collapsibleState);
+    }
+
+    public getZnodePath(): string {
+        return `/${this.label}`;
     }
 
     getTreeItem(): TreeItem {
@@ -15,6 +22,6 @@ export class ZookeeperNode {
     }
 
     async getChildren(element?: ZookeeperNode): Promise<ZookeeperNode[]> {
-        return [];
+        return element ? zk.getChildren(element.getZnodePath()) : [];
     }
 }
