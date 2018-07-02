@@ -28,15 +28,38 @@ export const createNode = (path: string): Promise<string> => {
     });
 };
 
+export const getNodeData = (path: string): Promise<string> => {
+    console.log('Getting data: ', path);
+    return new Promise((resolve, reject) => {
+        client.getData(path, (error, buffer) => {
+            if (error) console.log(error);
+
+            if (!buffer) {
+                resolve('');
+                return;
+            }
+
+            try {
+                const nodeData = JSON.parse(buffer.toString());
+                resolve(nodeData);
+            } catch(e) {
+                console.log(e);
+                reject('');
+            }
+        }); 
+    });
+};
+
 export const getChildren = (path: string = '/'): Promise<ZookeeperNode[]> => {
     return new Promise((resolve, reject) => {
         client.getChildren(path, (error, children, stat) => {
             if(error) reject(error);
-            console.log('Children: ', children);
-            resolve(
-                children.filter(child => child !== 'zookeeper')
-                        .map(childName => new ZookeeperNode(childName, TreeItemCollapsibleState.Collapsed))
-                );
+            Promise.all(children.filter(child => child !== 'zookeeper')
+                        .map(async childName => {
+                            let data = await getNodeData(`${path !== '/' ? path : ''}/${childName}`);
+                            return new ZookeeperNode(childName, TreeItemCollapsibleState.Collapsed, data);
+                        }))
+                        .then(children => resolve(children));
         }); 
     });
 };

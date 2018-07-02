@@ -17,6 +17,13 @@
     ],
     "main": "./out/extension",
     "contributes": {
+        "commands": [
+            {
+                "command": "zookeeper.viewNode",
+                "title": "View existing data residing in a given Zookeeper ZNode",
+                "category": "Zookeeper"
+            }
+        ],
         "viewsContainers": {
             "activitybar": [
                 {
