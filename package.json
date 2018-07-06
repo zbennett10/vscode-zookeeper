@@ -22,6 +22,11 @@
                 "command": "zookeeper.viewNode",
                 "title": "View existing data residing in a given Zookeeper ZNode",
                 "category": "Zookeeper"
+            },
+            {
+                "command": "zookeeper.editNodeData",
+                "title": "Edit Node Data",
+                "category": "Zookeeper"
             }
         ],
         "viewsContainers": {

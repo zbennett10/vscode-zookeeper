@@ -8,14 +8,12 @@ export const client = zookeeper.createClient('localhost:2181');
 client.once('connected', () => {
     console.log('Connected to Zookeeper');
     window.showInformationMessage("vscode-zookeeper successfully connected to Zookeeper at 'http://localhost:2181"); 
-    // client.setData('/test/config', Buffer.from(JSON.stringify({test: 'data'})), (error, stat) => {
+
+    // HERE FOR TESTING PURPOSES
+    // client.create('/test', () => {});    
+    // client.create('/test/config', Buffer.from(JSON.stringify({test: 'data'})), (error, stat) => {
     //     console.log(error);
     //     console.log('Data set');
-    // });
-
-    // client.getData('/test/config', (error, buffer) => {
-    //     console.log(error);
-    //     console.log('Data: ', JSON.parse(buffer.toString()));
     // });
 });
 
@@ -27,6 +25,18 @@ export const createNode = (path: string): Promise<string> => {
         });
     });
 };
+
+export const setNodeData = (path: string, data: Buffer): Promise<Boolean> => {
+    return new Promise((resolve, reject) => {
+        client.setData(path, data, (error, stat) => {
+            if(error) reject(error);
+            else {
+                console.log("Setting data stat: ", stat);
+                resolve(true);
+            }  
+        });
+    });
+}
 
 export const getNodeData = (path: string): Promise<string> => {
     console.log('Getting data: ', path);

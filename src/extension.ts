@@ -12,26 +12,52 @@ export function activate(context: ExtensionContext) {
     zk.client.connect();
 
     window.registerTreeDataProvider('zookeeperExplorer', treeProvider);
+
+    context.subscriptions.push(commands.registerCommand('zookeeper.editNodeData', (nodeData) => {
+        zk.setNodeData('/test/config', Buffer.from(nodeData));
+    }));
+
     context.subscriptions.push(commands.registerCommand('zookeeper.viewNode', (nodeData) => {
         // Create and show a new webview
         const panel = window.createWebviewPanel(
             'zookeeper', // Identifies the type of the webview. Used internally
             "ZNode Data", // Title of the panel displayed to the user
             ViewColumn.One, // Editor column to show the new webview panel in.
-            { } // Webview options. More on these later.
+            { enableScripts: true } // Webview options. More on these later.
         );
+
+        // wire up message passing
+        panel.webview.onDidReceiveMessage(message => {
+            switch (message.command) {
+                case 'zookeeper.editNodeData':
+                    commands.executeCommand('zookeeper.editNodeData', message.text);
+                    return;
+            }
+        }, undefined, context.subscriptions);
+
         panel.webview.html =  `<!DOCTYPE html>
         <html lang="en">
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Cat Coding</title>
+            <title>ZNode</title>
         </head>
         <body>
-            <textarea>${JSON.stringify(nodeData)}</textarea>
+            <textarea id="NodeData">${JSON.stringify(nodeData)}</textarea>
+            <button id="Save">Save</button>
+            <script>
+                const vscode = acquireVsCodeApi();
+                const nodeData = document.querySelector('#NodeData').value;
+                const saveBtn = document.querySelector('#Save');
+                saveBtn.addEventListener('click', (e) => {
+                    vscode.postMessage({
+                        command: 'zookeeper.editNodeData',
+                        text: nodeData
+                    });
+                });
+            </script>
         </body>
         </html>`;
-        console.log('panel: ', panel, ' created..');
     }));
 }
 
