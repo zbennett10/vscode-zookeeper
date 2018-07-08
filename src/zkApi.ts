@@ -72,8 +72,9 @@ export const getChildren = (path: string = '/'): Promise<ZookeeperNode[]> => {
             if(error) reject(error);
             Promise.all(children.filter(child => child !== 'zookeeper')
                         .map(async childName => {
-                            let data = await getNodeData(`${path !== '/' ? path : ''}/${childName}`);
-                            return new ZookeeperNode(childName, TreeItemCollapsibleState.Collapsed, data);
+                            let qualifiedPath = `${path !== '/' ? path : ''}/${childName}`;
+                            let data = await getNodeData(qualifiedPath);
+                            return new ZookeeperNode(qualifiedPath, TreeItemCollapsibleState.Collapsed, data);
                         }))
                         .then(children => resolve(children));
         }); 

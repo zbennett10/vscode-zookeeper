@@ -13,8 +13,9 @@ export function activate(context: ExtensionContext) {
 
     window.registerTreeDataProvider('zookeeperExplorer', treeProvider);
 
-    context.subscriptions.push(commands.registerCommand('zookeeper.editNodeData', (nodeData) => {
-        zk.setNodeData('/test/config', Buffer.from(nodeData));
+    context.subscriptions.push(commands.registerCommand('zookeeper.editNodeData', (nodeData, path) => {
+        console.log('Attempting to set node data for path: ', path);
+        zk.setNodeData(path, Buffer.from(nodeData));
     }));
 
     context.subscriptions.push(commands.registerCommand('zookeeper.viewNode', (nodeData, path) => {
@@ -28,19 +29,22 @@ export function activate(context: ExtensionContext) {
 
         // wire up message passing
         panel.webview.onDidReceiveMessage(message => {
+            console.log('recieved message from webview: ', message);
             switch (message.command) {
                 case 'zookeeper.editNodeData':
-                    commands.executeCommand('zookeeper.editNodeData', message.text);
+                    commands.executeCommand('zookeeper.editNodeData', ...message.arguments);
                     return;
             }
         }, undefined, context.subscriptions);
+
+        console.log('Viewing node at path: ', path);
 
         panel.webview.html =  `<!DOCTYPE html>
         <html lang="en">
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>ZNode</title>
+            <title>ZNode - ${path}</title>
         </head>
         <body>
             <textarea id="NodeData">${JSON.stringify(nodeData)}</textarea>
@@ -51,9 +55,10 @@ export function activate(context: ExtensionContext) {
 
                 saveBtn.addEventListener('click', (e) => {
                     const nodeData = document.querySelector('#NodeData').value;
+                    const path = '${path}';
                     vscode.postMessage({
                         command: 'zookeeper.editNodeData',
-                        text: nodeData
+                        arguments: [nodeData, path]
                     });
                 });
             </script>

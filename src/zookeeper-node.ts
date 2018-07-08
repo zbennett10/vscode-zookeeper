@@ -26,7 +26,7 @@ export class ZookeeperNode extends TreeItem {
     }
 
     public getZnodePath(): string {
-        return `/${this.label}`;
+        return this.label;
     }
 
     public getZnodeData(): string {
@@ -41,7 +41,7 @@ export class ZookeeperNode extends TreeItem {
             command: {
                 command: nodeData ? 'zookeeper.viewNode' : 'zookeeper.noOp',
                 title: nodeData ? `Node: ${nodePath}` : '',
-                arguments: [nodeData]
+                arguments: [nodeData, nodePath]
             }
         };
     }
