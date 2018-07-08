@@ -5,7 +5,7 @@ import ZookeeperExplorerProvider from './explorer';
 import * as zk from './zkApi';
 
 
-var treeProvider = new ZookeeperExplorerProvider();
+export const treeProvider = new ZookeeperExplorerProvider();
 
 export function activate(context: ExtensionContext) {
     console.log('vscode-zookeeper: Attempting to connect to Zookeeper');
@@ -17,11 +17,11 @@ export function activate(context: ExtensionContext) {
         zk.setNodeData('/test/config', Buffer.from(nodeData));
     }));
 
-    context.subscriptions.push(commands.registerCommand('zookeeper.viewNode', (nodeData) => {
+    context.subscriptions.push(commands.registerCommand('zookeeper.viewNode', (nodeData, path) => {
         // Create and show a new webview
         const panel = window.createWebviewPanel(
             'zookeeper', // Identifies the type of the webview. Used internally
-            "ZNode Data", // Title of the panel displayed to the user
+            `ZNode - ${path}`, // Title of the panel displayed to the user
             ViewColumn.One, // Editor column to show the new webview panel in.
             { enableScripts: true } // Webview options. More on these later.
         );
@@ -47,9 +47,10 @@ export function activate(context: ExtensionContext) {
             <button id="Save">Save</button>
             <script>
                 const vscode = acquireVsCodeApi();
-                const nodeData = document.querySelector('#NodeData').value;
                 const saveBtn = document.querySelector('#Save');
+
                 saveBtn.addEventListener('click', (e) => {
+                    const nodeData = document.querySelector('#NodeData').value;
                     vscode.postMessage({
                         command: 'zookeeper.editNodeData',
                         text: nodeData

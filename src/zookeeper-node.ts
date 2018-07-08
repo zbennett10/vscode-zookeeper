@@ -14,7 +14,7 @@ export class ZookeeperNode extends TreeItem {
             this.command = {
                 command: 'zookeeper.viewNode',
                 title: `Node: ${this.getZnodePath()}`,
-                arguments: [this.getZnodeData()]
+                arguments: [this.getZnodeData(), this.getZnodePath()]
             };
         } else {
             this.command = {

@@ -3,6 +3,8 @@
 import * as zookeeper from 'node-zookeeper-client';
 import { window, TreeItemCollapsibleState } from 'vscode';
 import { ZookeeperNode } from './zookeeper-node';
+import { treeProvider } from './extension';
+
 export const client = zookeeper.createClient('localhost:2181');
 
 client.once('connected', () => {
@@ -27,11 +29,13 @@ export const createNode = (path: string): Promise<string> => {
 };
 
 export const setNodeData = (path: string, data: Buffer): Promise<Boolean> => {
+    console.log(`Setting node data: ${JSON.stringify(JSON.parse(data.toString()))} at path ${path}`);
     return new Promise((resolve, reject) => {
         client.setData(path, data, (error, stat) => {
             if(error) reject(error);
             else {
-                console.log("Setting data stat: ", stat);
+                console.log(`Set data at path - ${path}. Stat is: `, stat);
+                treeProvider.refresh();
                 resolve(true);
             }  
         });
@@ -45,12 +49,14 @@ export const getNodeData = (path: string): Promise<string> => {
             if (error) console.log(error);
 
             if (!buffer) {
+                console.log(`There was no buffer for node at path - ${path}.`);
                 resolve('');
                 return;
             }
 
             try {
                 const nodeData = JSON.parse(buffer.toString());
+                console.log(`There was json data: ${JSON.stringify(nodeData)} at path - ${path}`);
                 resolve(nodeData);
             } catch(e) {
                 console.log(e);
