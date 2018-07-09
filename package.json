@@ -20,7 +20,17 @@
         "commands": [
             {
                 "command": "zookeeper.viewNode",
-                "title": "View existing data residing in a given Zookeeper ZNode",
+                "title": "View existing data residing in a given Zookeeper Node",
+                "category": "Zookeeper"
+            },
+            {
+                "command": "zookeeper.deleteNode",
+                "title": "Delete a Zookeeper Node",
+                "category": "Zookeeper"
+            },
+            {
+                "command": "zookeeper.createNode",
+                "title": "Create a Zookeeper Node",
                 "category": "Zookeeper"
             },
             {

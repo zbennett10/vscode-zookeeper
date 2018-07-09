@@ -10,20 +10,30 @@ export const client = zookeeper.createClient('localhost:2181');
 client.once('connected', () => {
     console.log('Connected to Zookeeper');
     window.showInformationMessage("vscode-zookeeper successfully connected to Zookeeper at 'http://localhost:2181"); 
-
-    // HERE FOR TESTING PURPOSES
-    // client.create('/test', () => {});    
-    // client.create('/test/config', Buffer.from(JSON.stringify({test: 'data'})), (error, stat) => {
-    //     console.log(error);
-    //     console.log('Data set');
-    // });
 });
 
 export const createNode = (path: string): Promise<string> => {
     return new Promise((resolve, reject) => {
         client.create(path, (error, returnedPath) => {
-            if(error) reject(error);
+            if(error) {
+                reject(error);
+                window.showErrorMessage(`Unable to create zookeeper node at path: ${path}`);
+            }
+            treeProvider.refresh();
             resolve(returnedPath);
+        });
+    });
+};
+
+export const deleteNode = (path: string): Promise<boolean> => {
+    return new Promise((resolve, reject) => {
+        client.remove(path, (error) => {
+            if(error) {
+                reject(error);
+                window.showErrorMessage(`Unable to delete zookeeper node at path: ${path}`);
+            }
+            treeProvider.refresh();
+            resolve(true);
         });
     });
 };

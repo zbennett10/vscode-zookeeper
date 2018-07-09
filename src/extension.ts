@@ -1,6 +1,6 @@
 'use strict';
 
-import { window, commands, ExtensionContext, ViewColumn } from 'vscode';
+import { window, commands, ExtensionContext, ViewColumn, WebviewPanel } from 'vscode';
 import ZookeeperExplorerProvider from './explorer';
 import * as zk from './zkApi';
 
@@ -8,26 +8,49 @@ import * as zk from './zkApi';
 export const treeProvider = new ZookeeperExplorerProvider();
 
 export function activate(context: ExtensionContext) {
+    let currentlyOpenedPanels: WebviewPanel[] = [];
+
     console.log('vscode-zookeeper: Attempting to connect to Zookeeper');
     zk.client.connect();
 
     window.registerTreeDataProvider('zookeeperExplorer', treeProvider);
 
+
     context.subscriptions.push(commands.registerCommand('zookeeper.editNodeData', (nodeData, path) => {
         console.log('Attempting to set node data for path: ', path);
         zk.setNodeData(path, Buffer.from(nodeData));
     }));
+    
+    context.subscriptions.push(commands.registerCommand('zookeeper.createNode', (path) => {
+        if(!path) {
+            window.showInputBox().then(inputPath => zk.createNode(inputPath || ''));    
+        } else {
+            zk.createNode(path);
+        }
+    }));
+
+    context.subscriptions.push(commands.registerCommand('zookeeper.deleteNode', (path) => {
+        if(!path) {
+            window.showInputBox().then(inputPath => zk.deleteNode(inputPath || ''));    
+        } else {
+            zk.deleteNode(path);
+        }
+    }));
 
     context.subscriptions.push(commands.registerCommand('zookeeper.viewNode', (nodeData, path) => {
-        // Create and show a new webview
-        const panel = window.createWebviewPanel(
-            'zookeeper', // Identifies the type of the webview. Used internally
-            `ZNode - ${path}`, // Title of the panel displayed to the user
-            ViewColumn.One, // Editor column to show the new webview panel in.
-            { enableScripts: true } // Webview options. More on these later.
-        );
+        // Close currently opened panels.
+        currentlyOpenedPanels.forEach(panel => panel.dispose()); 
 
-        // wire up message passing
+        const panel: WebviewPanel = window.createWebviewPanel(
+            'zookeeper', 
+            `ZNode - ${path}`, 
+            ViewColumn.One, 
+            { enableScripts: true } 
+        );
+        
+        currentlyOpenedPanels.push(panel);
+
+        // Wire up message passing
         panel.webview.onDidReceiveMessage(message => {
             console.log('recieved message from webview: ', message);
             switch (message.command) {

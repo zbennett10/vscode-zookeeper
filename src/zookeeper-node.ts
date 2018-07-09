@@ -10,19 +10,11 @@ export class ZookeeperNode extends TreeItem {
         private zNodeData: string = ''
     ) {
         super(label, collapsibleState);
-        if(zNodeData) {
-            this.command = {
-                command: 'zookeeper.viewNode',
-                title: `Node: ${this.getZnodePath()}`,
-                arguments: [this.getZnodeData(), this.getZnodePath()]
-            };
-        } else {
-            this.command = {
-                command: 'zookeeper.noOp',
-                title: '',
-                arguments: []
-            };
-        }
+        this.command = {
+            command: 'zookeeper.viewNode',
+            title: `Node: ${this.getZnodePath()}`,
+            arguments: [zNodeData, this.getZnodePath()]
+        };
     }
 
     public getZnodePath(): string {
