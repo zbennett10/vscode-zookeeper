@@ -72,12 +72,10 @@ export const deleteNode = (path: string): Promise<boolean> => {
 };
 
 export const setNodeData = (path: string, data: Buffer): Promise<Boolean> => {
-    console.log(`Setting node data: ${JSON.stringify(JSON.parse(data.toString()))} at path ${path}`);
     return new Promise((resolve, reject) => {
         client.setData(path, data, (error, stat) => {
             if(error) reject(error);
             else {
-                console.log(`Set data at path - ${path}. Stat is: `, stat);
                 treeProvider.refresh();
                 resolve(true);
             }  
@@ -98,9 +96,7 @@ export const getNodeData = (path: string): Promise<string> => {
             }
 
             try {
-                const nodeData = JSON.parse(buffer.toString());
-                console.log(`There was json data: ${JSON.stringify(nodeData)} at path - ${path}`);
-                resolve(nodeData);
+                resolve(buffer.toString());
             } catch(e) {
                 console.log(e);
                 reject('');

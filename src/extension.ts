@@ -88,7 +88,7 @@ export function activate(context: ExtensionContext) {
         </head>
         <body>
             <div class='container'>
-                <textarea id="NodeData">${JSON.stringify(nodeData)}</textarea>
+                <textarea id="NodeData">${nodeData.toString()}</textarea>
                 <button id="Save">Save</button>
             </div>
             <script>
