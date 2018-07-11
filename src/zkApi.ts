@@ -5,12 +5,45 @@ import { window, TreeItemCollapsibleState } from 'vscode';
 import { ZookeeperNode } from './zookeeper-node';
 import { treeProvider } from './extension';
 
-export const client = zookeeper.createClient('localhost:2181');
+const createDefaultConnection = (): zookeeper.Client => {
+    let defaultConnection = zookeeper.createClient('localhost:2181');
+    console.log('default: ', defaultConnection);
+    defaultConnection.once('connected', () => {
+        console.log('Connected to Zookeeper');
+        window.showInformationMessage("vscode-zookeeper successfully connected to Zookeeper at 'http://localhost:2181"); 
+    });
+    return defaultConnection;
+};
 
-client.once('connected', () => {
-    console.log('Connected to Zookeeper');
-    window.showInformationMessage("vscode-zookeeper successfully connected to Zookeeper at 'http://localhost:2181"); 
-});
+export let client = createDefaultConnection();
+
+export const disconnect = () => {
+    if(client) {
+        client.on('disconnected', () => {
+            window.showInformationMessage('Successfully disconnected from Zookeeper.');
+        });
+        client.close();
+    }
+};
+
+export const createNewConnection = (host: string): void => {
+    if(client) client.close();
+    let connectionTimer = setTimeout(() => {
+        console.log('Timer ran.');
+        window.showErrorMessage(`Unable to connect to Zookeeper at host: ${host}`);
+    }, 8000);
+
+    console.log('creating new connection: ', host);
+    let newConnection = zookeeper.createClient(host);
+    newConnection.connect();
+    newConnection.once('connected', () => {
+        console.log('Zookeeper connected to new host');
+        client = newConnection;
+        clearTimeout(connectionTimer);
+        treeProvider.refresh();
+        window.showInformationMessage(`vscode-zookeeper successfully connected to Zookeeper at ${host}`); 
+    });
+};
 
 export const createNode = (path: string): Promise<string> => {
     return new Promise((resolve, reject) => {

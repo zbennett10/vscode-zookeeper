@@ -15,6 +15,18 @@ export function activate(context: ExtensionContext) {
 
     window.registerTreeDataProvider('zookeeperExplorer', treeProvider);
 
+    context.subscriptions.push(commands.registerCommand('zookeeper.disconnect', zk.disconnect));
+
+    context.subscriptions.push(commands.registerCommand('zookeeper.setHost', (host) => {
+        if(!host) {
+            window.showInputBox().then(inputHost => {
+                console.log('Attempting to set new Zookeeper host to: ', inputHost);
+                zk.createNewConnection(inputHost || 'http://localhost:2181');
+            });    
+        } else {
+            zk.createNewConnection(host);
+        }
+    }));
 
     context.subscriptions.push(commands.registerCommand('zookeeper.editNodeData', (nodeData, path) => {
         console.log('Attempting to set node data for path: ', path);
@@ -68,10 +80,17 @@ export function activate(context: ExtensionContext) {
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>ZNode - ${path}</title>
+            <style>
+                div.container {display: flex; flex-direction: column; align-items: center; height: 100%; width: 100%;}
+                textarea {overflow-y: auto; width: 100%; min-height: 200px;}
+                button {margin-left: auto; margin-right: auto; width: 200px; height: 50px; margin-top: 25px;}
+            </style>
         </head>
         <body>
-            <textarea id="NodeData">${JSON.stringify(nodeData)}</textarea>
-            <button id="Save">Save</button>
+            <div class='container'>
+                <textarea id="NodeData">${JSON.stringify(nodeData)}</textarea>
+                <button id="Save">Save</button>
+            </div>
             <script>
                 const vscode = acquireVsCodeApi();
                 const saveBtn = document.querySelector('#Save');

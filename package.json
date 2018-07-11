@@ -19,6 +19,16 @@
     "contributes": {
         "commands": [
             {
+                "command": "zookeeper.disconnect",
+                "title": "Disconnects from Zookeeper.",
+                "category": "Zookeeper"
+            },
+            {
+                "command": "zookeeper.setHost",
+                "title": "Points the Zookeeper extension to a given host <ip:port>.",
+                "category": "Zookeeper"
+            },
+            {
                 "command": "zookeeper.viewNode",
                 "title": "View existing data residing in a given Zookeeper Node",
                 "category": "Zookeeper"
