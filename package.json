@@ -3,7 +3,7 @@
     "displayName": "vscode-zookeeper",
     "description": "A Visual Studio Code extension for configuring Apache Zookeeper.",
     "version": "0.0.1",
-    "publisher": "zbennett10",
+    "publisher": "zacharybennett10",
     "engines": {
         "vscode": "^1.24.0"
     },
