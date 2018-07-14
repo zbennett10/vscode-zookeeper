@@ -4,6 +4,9 @@
     "description": "A Visual Studio Code extension for configuring Apache Zookeeper.",
     "version": "0.0.1",
     "publisher": "zacharybennett10",
+    "repository": {
+        "url": "https://github.com/zbennett10/vscode-zookeeper"
+    },
     "engines": {
         "vscode": "^1.24.0"
     },
