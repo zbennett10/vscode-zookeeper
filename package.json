@@ -79,14 +79,14 @@
         "test": "npm run compile && node ./node_modules/vscode/bin/test"
     },
     "dependencies": {
-        "node-zookeeper-client": "^0.2.2"
+        "node-zookeeper-client": "^1.0.0"
     },
     "devDependencies": {
-        "typescript": "^2.6.1",
-        "vscode": "^1.1.6",
-        "tslint": "^5.8.0",
+        "typescript": "^3.5.0",
+        "vscode": "^1.1.35",
+        "tslint": "^5.18.0",
         "@types/node-zookeeper-client": "^0.2.6",
-        "@types/node": "^7.0.43",
+        "@types/node": "12.6.8",
         "@types/mocha": "^2.2.42"
     }
 }
