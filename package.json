@@ -56,21 +56,20 @@
         "viewsContainers": {
             "activitybar": [
                 {
-                "id": "zookeeperView",
-                "title": "Zookeeper",
-                "icon": "media/zookeeper.png"
+                    "id": "zookeeperView",
+                    "title": "Zookeeper",
+                    "icon": "media/zookeeper.png"
                 }
             ]
         },
         "views": {
             "zookeeperView": [
                 {
-                "id": "zookeeperExplorer",
-                "name": "Zookeeper"
+                    "id": "zookeeperExplorer",
+                    "name": "Zookeeper"
                 }
             ]
         }
-
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",
