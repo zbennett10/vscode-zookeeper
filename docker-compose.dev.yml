@@ -1,0 +1,34 @@
+version: '3.2'
+services:
+  zookeeper:
+    image: zookeeper:latest
+    restart: always
+    hostname: zookeeper
+    ports:
+      - "2181:2181"
+      - "2888:2888"
+      - "3888:3888"
+
+  zoo-api:
+    image: elkozmon/zoonavigator-api:0.5.0
+    container_name: zoo-api
+    ports:
+      - "9043:9043"
+    environment:
+      - API_HTTP_PORT=9043
+    restart: always
+    depends_on:
+      - zookeeper
+
+  zoo-web:
+    image: elkozmon/zoonavigator-web:0.5.0
+    container_name: zoo-web
+    ports:
+      - "8001:8001"
+    environment:
+      - WEB_HTTP_PORT=8001
+      - API_HOST=zoo-api
+      - API_PORT=9043
+      - AUTO_CONNECT_CONNECTION_STRING=zookeeper:2181
+    depends_on:
+      - zoo-api
