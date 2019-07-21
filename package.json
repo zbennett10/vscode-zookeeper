@@ -2,7 +2,7 @@
     "name": "vscode-zookeeper",
     "displayName": "vscode-zookeeper",
     "description": "A Visual Studio Code extension for configuring Apache Zookeeper.",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "publisher": "zacharybennett10",
     "icon": "media/zookeeper-icon.png",
     "repository": {
