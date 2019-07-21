@@ -8,4 +8,5 @@ This extension helps decrease context-switching for developers by providing an i
 
 
 ## TODO
+- Tests
 - Set up listeners on all available ZNodes and refresh tree accordingly

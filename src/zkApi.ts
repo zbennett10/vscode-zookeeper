@@ -9,7 +9,7 @@ const createDefaultConnection = (): zookeeper.Client => {
     let defaultConnection = zookeeper.createClient('localhost:2181');
     console.log('default: ', defaultConnection);
     defaultConnection.once('connected', () => {
-        console.log('Connected to Zookeeper');
+        console.log('[VSCode-Zookeeper]: Connected to Zookeeper');
         window.showInformationMessage("vscode-zookeeper successfully connected to Zookeeper at 'http://localhost:2181"); 
     });
     return defaultConnection;
@@ -29,7 +29,6 @@ export const disconnect = () => {
 export const createNewConnection = (host: string): void => {
     if(client) client.close();
     let connectionTimer = setTimeout(() => {
-        console.log('Timer ran.');
         window.showErrorMessage(`Unable to connect to Zookeeper at host: ${host}`);
     }, 8000);
 
@@ -37,7 +36,7 @@ export const createNewConnection = (host: string): void => {
     let newConnection = zookeeper.createClient(host);
     newConnection.connect();
     newConnection.once('connected', () => {
-        console.log('Zookeeper connected to new host');
+        console.log('[VSCode-Zookeeper]: Zookeeper connected to new host');
         client = newConnection;
         clearTimeout(connectionTimer);
         treeProvider.refresh();
@@ -47,6 +46,14 @@ export const createNewConnection = (host: string): void => {
 
 export const createNode = (path: string): Promise<string> => {
     return new Promise((resolve, reject) => {
+        if (!path)  {
+            reject(new Error('[VSCode Zookeeper]: Path is required.'));
+            window.showErrorMessage('A path is required to create zookeeper node');
+        }
+
+        // Add the required forward-slash if none is given
+        if (path && path[0] !== '/') path = '/' + path;
+
         client.create(path, (error, returnedPath) => {
             if(error) {
                 reject(error);
@@ -60,6 +67,14 @@ export const createNode = (path: string): Promise<string> => {
 
 export const deleteNode = (path: string): Promise<boolean> => {
     return new Promise((resolve, reject) => {
+        if (!path)  {
+            reject(new Error('[VSCode Zookeeper]: Path is required.'));
+            window.showErrorMessage('A path is required to delete a zookeeper node');
+        }
+
+        // Add the required forward-slash if none is given
+        if (path && path[0] !== '/') path = '/' + path;
+
         client.remove(path, (error) => {
             if(error) {
                 reject(error);
@@ -73,6 +88,14 @@ export const deleteNode = (path: string): Promise<boolean> => {
 
 export const setNodeData = (path: string, data: Buffer): Promise<Boolean> => {
     return new Promise((resolve, reject) => {
+        if (!path)  {
+            reject(new Error('[VSCode Zookeeper]: Path is required.'));
+            window.showErrorMessage('A path is required to edit a zookeeper node');
+        }
+
+        // Add the required forward-slash if none is given
+        if (path && path[0] !== '/') path = '/' + path;
+
         client.setData(path, data, (error, stat) => {
             if(error) reject(error);
             else {
@@ -84,8 +107,15 @@ export const setNodeData = (path: string, data: Buffer): Promise<Boolean> => {
 }
 
 export const getNodeData = (path: string): Promise<string> => {
-    console.log('Getting data: ', path);
     return new Promise((resolve, reject) => {
+        if (!path)  {
+            reject(new Error('[VSCode Zookeeper]: Path is required.'));
+            window.showErrorMessage('A path is required to edit a zookeeper node');
+        }
+
+        // Add the required forward-slash if none is given
+        if (path && path[0] !== '/') path = '/' + path;
+
         client.getData(path, (error, buffer) => {
             if (error) console.log(error);
 
@@ -107,6 +137,9 @@ export const getNodeData = (path: string): Promise<string> => {
 
 export const getChildren = (path: string = '/'): Promise<ZookeeperNode[]> => {
     return new Promise((resolve, reject) => {
+        // Add the required forward-slash if none is given
+        if (path && path[0] !== '/') path = '/' + path;
+
         client.getChildren(path, (error, children, stat) => {
             if(error) reject(error);
             Promise.all(children.filter(child => child !== 'zookeeper')
